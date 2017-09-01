@@ -14,6 +14,7 @@ from keras.callbacks import ModelCheckpoint
 from keras.models import Sequential
 from keras.optimizers import Adam
 from keras.layers import Convolution2D, Cropping2D, Dense, Dropout, Flatten, Lambda, MaxPooling2D
+from keras.utils.visualize_util import plot
 
 ### Constants
 TOP_CROP    = 70
@@ -115,11 +116,11 @@ def build_model(dropout):
     model.add(Flatten())
     # model.add(Dense(1164, activation='relu'))
     model.add(Dense(100, activation='relu'))
-    # model.add(Dropout(dropout))
+    model.add(Dropout(dropout))
     model.add(Dense(50, activation='relu'))
-    # model.add(Dropout(dropout))
+    model.add(Dropout(dropout))
     model.add(Dense(10, activation='relu'))
-    # model.add(Dropout(dropout))
+    model.add(Dropout(dropout))
     model.add(Dense(1))
     return model
 
@@ -138,7 +139,7 @@ def load_previous_model_if_exists(dropout):
 
 ### Model training constants
 BATCH_SIZE    = 32
-DROPOUT       = 0.75
+DROPOUT       = 0.25
 EPOCHS        = 5
 LEARNING_RATE = 0.001
 
@@ -147,7 +148,8 @@ train_samples, validation_samples = train_test_split(samples, test_size=0.3)
 train_generator = generator(train_samples, batch_size=BATCH_SIZE)
 validation_generator = generator(validation_samples, batch_size=BATCH_SIZE)
 
-model = build_model(DROPOUT)
+model = load_previous_model_if_exists(DROPOUT)
+plot(model, to_file='model.png')
 
 optimizer = Adam(lr=LEARNING_RATE)
 model.compile(loss='mse', optimizer=optimizer)
@@ -158,6 +160,3 @@ model.fit_generator(train_generator, samples_per_epoch=len(train_samples) * 6, \
                                      validation_data=validation_generator, \
                                      nb_val_samples=len(validation_samples) * 6, \
                                      nb_epoch=EPOCHS, verbose=1, callbacks=[checkpointer])
-
-#model.save('model.h5')
-
