@@ -79,17 +79,17 @@ def generator(samples, batch_size=32):
             for batch_sample in batch_samples:
                 center_name = '../data/IMG/' + batch_sample[0].split('/')[-1]
                 center_image = cv.imread(center_name)
-                # left_name = '../data/IMG/' + batch_sample[1].split('/')[-1]
-                # left_image = cv.imread(left_name)
-                # right_name = '../data/IMG/' + batch_sample[2].split('/')[-1]
-                # right_image = cv.imread(right_name)
+                left_name = '../data/IMG/' + batch_sample[1].split('/')[-1]
+                left_image = cv.imread(left_name)
+                right_name = '../data/IMG/' + batch_sample[2].split('/')[-1]
+                right_image = cv.imread(right_name)
                 center_angle = float(batch_sample[3])
                 images.append(center_image)
-                # images.append(left_image)
-                # images.append(right_image)
+                images.append(left_image)
+                images.append(right_image)
                 angles.append(center_angle)
-                # angles.append(center_angle + STEERING_CORRECTION)
-                # angles.append(center_angle - STEERING_CORRECTION)
+                angles.append(center_angle + STEERING_CORRECTION)
+                angles.append(center_angle - STEERING_CORRECTION)
 
             X_train = np.array(images)
             y_train = np.array(angles)
@@ -159,4 +159,5 @@ model.fit_generator(train_generator, samples_per_epoch=len(train_samples) * 6, \
                                      nb_val_samples=len(validation_samples) * 6, \
                                      nb_epoch=EPOCHS, verbose=1, callbacks=[checkpointer])
 
-# model.save('model.h5')
+#model.save('model.h5')
+
